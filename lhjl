@@ -1,0 +1,6 @@
+$a = Get-Content "$HOME\" -Raw | ConvertFrom-Json
+$p = $a.sessionToken.Split('.')[1].Replace('-','+').Replace('_','/')
+$p = $p.PadRight($p.Length + (4 - $p.Length % 4) % 4, '=')
+$c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertFrom-Json
+"issued:  " + [DateTimeOffset]::FromUnixTimeSeconds($c.iat).LocalDateTime
+"expires: " + [DateTimeOffset]::FromUnixTimeSeconds($c.exp).LocalDateTime
