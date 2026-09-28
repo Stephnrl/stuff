@@ -1,6 +1,14 @@
-$a = Get-Content "$HOME\" -Raw | ConvertFrom-Json
-$p = $a.sessionToken.Split('.')[1].Replace('-','+').Replace('_','/')
-$p = $p.PadRight($p.Length + (4 - $p.Length % 4) % 4, '=')
-$c = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($p)) | ConvertFrom-Json
-"issued:  " + [DateTimeOffset]::FromUnixTimeSeconds($c.iat).LocalDateTime
-"expires: " + [DateTimeOffset]::FromUnixTimeSeconds($c.exp).LocalDateTime
+$RustBin = Join-Path $HOME "rust-local\bin"
+
+$UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$PathEntries = @($UserPath -split ";" | Where-Object { $_ })
+
+if ($PathEntries -notcontains $RustBin) {
+    $NewUserPath = (@($RustBin) + $PathEntries) -join ";"
+    [Environment]::SetEnvironmentVariable("Path", $NewUserPath, "User")
+}
+
+# Also update this PowerShell session immediately
+if (($env:Path -split ";") -notcontains $RustBin) {
+    $env:Path = "$RustBin;$env:Path"
+}
