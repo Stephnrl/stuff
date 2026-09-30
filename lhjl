@@ -1,14 +1,480 @@
-$RustBin = Join-Path $HOME "rust-local\bin"
+# ARC Image Release + Spacelift Integration Plan
 
-$UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
-$PathEntries = @($UserPath -split ";" | Where-Object { $_ })
+## Goal
 
-if ($PathEntries -notcontains $RustBin) {
-    $NewUserPath = (@($RustBin) + $PathEntries) -join ";"
-    [Environment]::SetEnvironmentVariable("Path", $NewUserPath, "User")
+We already have an existing GitHub-based image build and deployment workflow that performs much of the desired release process.
+
+The goal is **not to redesign everything from scratch**.
+
+The goal is to:
+
+1. Understand the existing implementation.
+2. Identify which parts already handle build, testing, security scanning, ACR publishing, nonprod deployment, validation, promotion, and production deployment.
+3. Determine where Spacelift should integrate into the existing process.
+4. Replace or integrate only the infrastructure deployment portions where Spacelift provides value.
+5. Preserve working custom GitHub Actions and existing release logic wherever possible.
+
+---
+
+## Desired End State
+
+Conceptually, the release should eventually resemble:
+
+```text
+GitHub Actions
+    |
+    | Build custom ARC runner image
+    |
+    | Validate required tooling / .NET versions
+    |
+    | Security scan
+    |
+    | Publish to Nonprod ACR
+    |
+    v
+Nonprod Deployment
+    |
+    | Terraform / Helm through Spacelift
+    |
+    v
+Nonprod AKS / ARC
+    |
+    | Runtime / functional / security validation
+    |
+    v
+Promote approved image
+Nonprod ACR -> Prod ACR
+    |
+    v
+Prod Deployment
+    |
+    | Terraform / Helm through Spacelift
+    |
+    v
+Prod AKS / ARC
+```
+
+GitHub Actions should generally remain responsible for the **release and image lifecycle**.
+
+Spacelift should generally own the **Terraform/Helm infrastructure deployment portions**.
+
+However, this is a target direction rather than a rigid requirement. The existing implementation should be analyzed before deciding exactly where responsibilities should move.
+
+---
+
+## Existing Spacelift Structure
+
+There are currently two Spacelift stacks:
+
+```text
+Nonprod Stack
+Prod Stack
+```
+
+Both already deploy Terraform for their respective AKS environments.
+
+Keep these stacks separate unless analysis finds a compelling reason otherwise.
+
+The likely model is:
+
+```text
+GitHub release workflow
+        |
+        +---- trigger/wait for Nonprod Spacelift stack
+        |
+        +---- validation/promotion
+        |
+        +---- trigger/wait for Prod Spacelift stack
+```
+
+Do not immediately create a direct:
+
+```text
+Nonprod Spacelift -> Prod Spacelift
+```
+
+dependency because there may be important validation, scanning, and image promotion stages between those deployments.
+
+---
+
+## Image Promotion Principle
+
+Prefer:
+
+```text
+BUILD ONCE
+    |
+    v
+SCAN
+    |
+    v
+NONPROD
+    |
+    v
+VALIDATE
+    |
+    v
+PROMOTE SAME IMAGE
+    |
+    v
+PROD
+```
+
+Do not rebuild the production image if the current process can promote the already validated image.
+
+Prefer immutable image references such as:
+
+```text
+registry/image@sha256:...
+```
+
+or at minimum an immutable release/commit tag.
+
+Avoid relying on:
+
+```text
+latest
+```
+
+for deployment identity.
+
+---
+
+## What the Agent Should Do First
+
+Before changing anything, inspect the current repository and deployment flow.
+
+Determine:
+
+- How the runner image is currently built.
+- Which custom GitHub Actions participate.
+- Where .NET 6 / 8 / 10 validation happens.
+- How the security scan currently works.
+- When the image is pushed to ACR.
+- Whether there are separate nonprod and prod ACRs.
+- How the image is currently deployed to nonprod AKS.
+- How Terraform is currently executed.
+- How Helm / ARC values are currently provided.
+- How the runner image/tag is passed into Terraform or Helm.
+- How post-deployment validation currently works.
+- Whether another security scan occurs after deployment.
+- How image promotion to production currently works.
+- How production deployment currently works.
+- What authentication already exists between GitHub, Azure, ACR, AKS, and Spacelift.
+- Which parts of this process are already working well and should remain unchanged.
+
+Do not assume the repository needs a new workflow.
+
+Map the existing workflow first.
+
+---
+
+## Expected Analysis Output
+
+Before implementation, produce a simple flow such as:
+
+```text
+CURRENT
+
+GitHub workflow
+    |
+    +-- existing build action
+    +-- existing scan action
+    +-- push nonprod ACR
+    +-- existing Terraform deployment
+    +-- validation
+    +-- image promotion
+    +-- existing prod Terraform deployment
+```
+
+Then show the proposed integration:
+
+```text
+PROPOSED
+
+GitHub workflow
+    |
+    +-- existing build action
+    +-- existing scan action
+    +-- push nonprod ACR
+    |
+    +-- Spacelift Nonprod
+    |
+    +-- existing validation
+    +-- existing promotion
+    |
+    +-- Spacelift Prod
+```
+
+The intent is to make the smallest reasonable architectural change.
+
+---
+
+## Likely Spacelift Integration
+
+The most likely change is replacing direct Terraform execution from GitHub with Spacelift runs.
+
+For example, if the existing process currently does:
+
+```text
+GitHub
+   |
+terraform init
+terraform plan
+terraform apply
+   |
+helm / ARC deployment
+```
+
+the desired integration may become:
+
+```text
+GitHub
+   |
+trigger Spacelift run
+   |
+wait for run result
+   |
+continue pipeline
+```
+
+GitHub should treat the Spacelift deployment like any other release gate.
+
+Conceptually:
+
+```text
+trigger nonprod Spacelift
+        |
+        v
+      WAIT
+        |
+   +----+----+
+   |         |
+ SUCCESS    FAIL
+   |         |
+continue    stop
+```
+
+The same model can later be used for production.
+
+---
+
+## Terraform / Helm Image Input
+
+Determine how the current Terraform code receives the ARC runner image.
+
+Ideally there should be a clean input such as:
+
+```hcl
+variable "runner_image" {
+  type = string
 }
+```
 
-# Also update this PowerShell session immediately
-if (($env:Path -split ";") -notcontains $RustBin) {
-    $env:Path = "$RustBin;$env:Path"
-}
+which ultimately reaches the ARC Helm configuration.
+
+Conceptually:
+
+```text
+GitHub image build
+        |
+        v
+image digest/tag
+        |
+        v
+Spacelift run
+        |
+        v
+Terraform
+        |
+        v
+Helm
+        |
+        v
+ARC Runner Scale Set
+```
+
+If an equivalent mechanism already exists, reuse it instead of introducing another abstraction.
+
+---
+
+## Nonprod Flow
+
+The desired nonprod flow is approximately:
+
+```text
+Build image
+    |
+Validate tooling / .NET
+    |
+Security scan
+    |
+Push to Nonprod ACR
+    |
+Trigger Nonprod Spacelift
+    |
+Terraform + Helm deployment
+    |
+Wait for deployment success
+    |
+Run existing nonprod validation
+```
+
+If the current workflow already performs additional validation, preserve it.
+
+Possible validation may include:
+
+- runner pod starts
+- runner registers with GitHub
+- test workflow can execute
+- .NET builds work on the actual deployed runner
+- runtime security scan passes
+- required CLI tooling works
+
+The exact validation should follow the existing implementation and organizational requirements.
+
+---
+
+## Production Flow
+
+After nonprod is successfully validated:
+
+```text
+Approved nonprod image
+        |
+        v
+Promote to Prod ACR
+        |
+        v
+Trigger Prod Spacelift
+        |
+        v
+Terraform + Helm
+        |
+        v
+Prod ARC
+```
+
+Reuse the existing image promotion method if it already safely promotes the same validated artifact.
+
+Do not introduce a rebuild just because the deployment mechanism changes to Spacelift.
+
+---
+
+## Failure Behavior
+
+Preserve a fail-closed release model.
+
+Examples:
+
+```text
+build fails
+    -> stop
+
+security scan fails
+    -> stop
+
+nonprod deployment fails
+    -> stop
+
+nonprod validation fails
+    -> stop before promotion
+
+image promotion fails
+    -> stop
+
+prod deployment fails
+    -> report deployment failure
+```
+
+Do not allow production deployment to continue after an earlier release gate fails.
+
+---
+
+## Implementation Approach
+
+Make changes incrementally.
+
+Suggested order:
+
+### Step 1
+
+Understand and document the existing workflow.
+
+Do not modify anything yet.
+
+### Step 2
+
+Identify the exact point where GitHub currently performs the nonprod Terraform/Helm deployment.
+
+Determine how that can be replaced by or delegated to the existing nonprod Spacelift stack.
+
+### Step 3
+
+Prove GitHub can:
+
+```text
+trigger nonprod Spacelift
+        ->
+wait for result
+        ->
+continue existing workflow
+```
+
+without changing the rest of the pipeline.
+
+### Step 4
+
+Verify the expected image/tag/digest reaches Terraform and ARC correctly.
+
+### Step 5
+
+Preserve and test the existing nonprod validation steps.
+
+### Step 6
+
+Integrate the existing production promotion/deployment flow with the production Spacelift stack.
+
+### Step 7
+
+Only after the basic integration works, consider improvements such as:
+
+- digest pinning
+- workload identity / OIDC
+- SBOM generation
+- image signing
+- stronger Spacelift policies
+- production approvals
+- external dependencies
+- automated rollback
+
+These should not block understanding or integrating the existing system.
+
+---
+
+## Initial Agent Task
+
+Start by analyzing the existing repository.
+
+Do **not** immediately rewrite the workflow.
+
+Report:
+
+1. The current end-to-end image release flow.
+2. Every GitHub workflow involved.
+3. Every custom GitHub Action involved.
+4. Where the image build occurs.
+5. Where .NET/tooling validation occurs.
+6. Where security scanning occurs.
+7. Where the image enters nonprod ACR.
+8. How nonprod Terraform/Helm deployment currently happens.
+9. How post-deployment validation happens.
+10. How image promotion to prod happens.
+11. How production Terraform/Helm deployment happens.
+12. How the ARC runner image value flows through the system.
+13. Which portions could be replaced cleanly by the existing Spacelift nonprod/prod stacks.
+14. Any risks or missing information.
+
+Then propose the **smallest integration change** that makes Spacelift responsible for the Terraform/Helm deployments while preserving the existing GitHub image build, scanning, validation, and promotion workflow.
+
+Do not implement production changes until the nonprod Spacelift integration has been proven.
