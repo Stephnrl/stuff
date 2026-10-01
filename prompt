@@ -1,0 +1,104 @@
+Act as the lead engineer for a multi-agent review of this Rust codebase.
+
+Create and coordinate multiple sub-agents to inspect the repository in parallel. The goal is to perform a thorough engineering review before making any changes.
+
+Do not modify code yet.
+
+Assign sub-agents to distinct areas so they do not duplicate work unnecessarily.
+
+Suggested investigation areas:
+
+1. Architecture and code structure
+   - Understand the major components, crates, modules, binaries, and libraries.
+   - Identify architectural boundaries and how data/control flows through the application.
+   - Look for unnecessary coupling, unclear responsibilities, or overly complex areas.
+
+2. Rust correctness and safety
+   - Look for potential bugs, panics, unsafe assumptions, unwrap/expect misuse, lifetime or ownership problems, error-handling weaknesses, resource leaks, and concurrency issues.
+   - Examine async code, threads, channels, locks, shared state, and process management carefully.
+   - Look for deadlocks, race conditions, blocking operations inside async code, or tasks that may never terminate.
+
+3. Terminal/process management
+   - Review how shells, PowerShell, WSL, subprocesses, PTYs, terminal sessions, tabs, and child processes are created and managed.
+   - Look for zombie processes, orphaned processes, improper shutdown behavior, incorrect signal handling, terminal resize issues, lost stdout/stderr, or session lifecycle problems.
+
+4. Error handling and resilience
+   - Trace important execution paths and identify places where failures could be silently ignored or poorly surfaced.
+   - Review Result/Option handling and error propagation.
+   - Look for situations that could leave the application in an inconsistent state.
+
+5. Performance and efficiency
+   - Look for unnecessary cloning, allocations, polling, repeated filesystem operations, excessive locking, excessive serialization/deserialization, inefficient collections, or expensive work in hot paths.
+   - Identify areas where the application could become slow as the number of terminal sessions or agents grows.
+
+6. Code quality and maintainability
+   - Look for duplicated logic, large functions, unclear naming, excessive complexity, unused abstractions, inconsistent patterns, or modules that should be separated.
+   - Identify opportunities to make the code easier to understand and maintain without overengineering it.
+
+7. Testing and reliability
+   - Examine the existing tests.
+   - Identify important code paths that lack coverage.
+   - Look for tests that may be brittle, incomplete, or not actually testing the intended behavior.
+   - Recommend useful unit, integration, concurrency, process-lifecycle, or regression tests.
+
+8. Dependencies and Rust ecosystem usage
+   - Review Cargo.toml files and how major dependencies are being used.
+   - Identify questionable dependency choices, unnecessary dependencies, outdated patterns, duplicated functionality, or places where the standard library or an existing dependency could simplify the code.
+   - Do not upgrade dependencies yet.
+
+9. User experience and quality-of-life improvements
+   - Review the application from the perspective of someone using it as an AI-agent terminal.
+   - Look for small improvements to logging, errors, status reporting, session management, configuration, commands, tab behavior, startup/shutdown, observability, and developer experience.
+   - Separate genuine usability improvements from purely cosmetic changes.
+
+10. Security
+    - Look for command-injection risks, unsafe shell construction, path handling problems, credential/token exposure, insecure temporary files, overly broad permissions, environment-variable leakage, and unsafe handling of user-controlled input.
+
+Have the sub-agents investigate independently and return concise findings to the lead agent.
+
+When all investigations are complete, consolidate them into one report.
+
+For every finding include:
+
+- Severity: Critical / High / Medium / Low / QoL
+- Confidence: High / Medium / Low
+- Category
+- File(s) and relevant function/module
+- Description of the issue
+- Why it matters
+- Evidence from the code
+- Recommended fix
+- Whether the fix is:
+  - safe/localized
+  - moderate architectural change
+  - potentially breaking
+
+Avoid speculative findings. If something looks suspicious but cannot be proven from the code, label it clearly as a possible issue and explain what would need to be verified.
+
+Prioritize actual correctness, reliability, maintainability, and user-impact issues over style preferences.
+
+At the end, provide:
+
+1. Executive summary
+2. Top 10 highest-value findings
+3. Confirmed bugs
+4. Possible bugs requiring further investigation
+5. Concurrency/process-management risks
+6. Error-handling weaknesses
+7. Performance opportunities
+8. Testing gaps
+9. Quality-of-life improvements
+10. Suggested refactoring opportunities
+11. Security concerns
+12. A recommended implementation order
+
+For the implementation order, group recommendations into:
+
+Phase 1 — low-risk/high-value fixes  
+Phase 2 — reliability and testing improvements  
+Phase 3 — structural/refactoring improvements  
+Phase 4 — optional quality-of-life enhancements
+
+Do not change any source files during this analysis.
+
+After presenting the report, stop and wait for me to decide which findings should be implemented.
