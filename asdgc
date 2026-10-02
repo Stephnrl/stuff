@@ -1,0 +1,166 @@
+Create a professional internal company presentation about AI agents, personas, skills, and agent orchestration.
+
+The audience is a small group of technical and semi-technical employees who already use AI tools such as Microsoft Copilot, but may not be familiar with custom AI agents, agent personas, reusable skills, or multi-agent orchestration.
+
+The presentation should be informational and educational and should prepare the audience for a live demonstration of an internal AI agent orchestration terminal that I developed.
+
+Use approximately 10–12 slides. Keep the slides visually clean, modern, technical, and easy to understand. Avoid excessive text. Prefer simple diagrams, workflows, icons, and short explanations.
+
+Structure the presentation around this story:
+
+1. Title slide
+   - AI Agent Orchestration
+   - Specialized Agents, Reusable Skills, One Control Plane
+
+2. How We Typically Use AI Today
+   - Most AI interactions begin with a general-purpose assistant or chat window.
+   - Users repeatedly provide context, instructions, standards, and expectations.
+   - The AI model is powerful, but the workflow around it is often manual.
+
+3. What Is an AI Agent?
+   Explain simply:
+   AI Agent = AI Model + Instructions + Persona + Skills + Tools + Context
+   Emphasize that the model provides intelligence while the agent gives that intelligence a defined responsibility.
+
+4. What Is an Agent Persona?
+   - A persona defines the role, responsibility, perspective, and behavior of an agent.
+   - Examples:
+     - Terraform Engineer
+     - Kubernetes / AKS Engineer
+     - Security Engineer
+     - Code Reviewer
+     - Documentation Engineer
+   Explain that different personas can examine the same problem from different perspectives.
+
+5. What Is an Agent Skill?
+   Explain the difference between a persona and a skill:
+   - Persona = Who the agent is
+   - Skill = How the agent performs a specific task
+   Examples of skills:
+   - Terraform code review
+   - AKS troubleshooting
+   - Infrastructure security review
+   - CI/CD pipeline analysis
+   - Internal documentation generation
+   - Application architecture review
+
+   Highlight this message:
+   "Skills turn repeatable engineering knowledge into reusable AI capabilities."
+
+6. Building a Specialized Agent
+   Show visually:
+   Persona + Skills + Tools + Context = Specialized Agent
+
+   Example:
+   Security Engineer Persona
+   +
+   Terraform Security Skill
+   +
+   AKS Security Skill
+   +
+   Compliance Review Skill
+   =
+   Specialized Security Agent
+
+7. Why Use Multiple Specialized Agents?
+   Explain separation of responsibilities.
+   Instead of asking one AI conversation to simultaneously act as a developer, security engineer, architect, reviewer, and documentation writer, specialized agents can focus on specific responsibilities.
+
+   Highlight benefits such as:
+   - Specialization
+   - Focused context
+   - Parallel work
+   - Independent review
+   - Reusable expertise
+   - More consistent workflows
+
+8. What Is Agent Orchestration?
+   Explain orchestration as coordinating and managing multiple specialized agents.
+
+   Show a simple diagram:
+
+                  Terraform Agent
+                 /
+   Engineer → Agent Orchestrator → Security Agent
+                 
+                  Code Review Agent
+                   
+                    Documentation Agent
+
+   Explain that the engineer remains in control and decides which agents perform which tasks.
+
+9. Internal AI Agent Orchestrator
+   Introduce the internal application I developed.
+
+   Explain that it is a terminal-based AI agent orchestration environment that allows an engineer to:
+   - Create specialized agents
+   - Assign personas
+   - Assign reusable skills
+   - Launch multiple agent sessions
+   - Dispatch tasks to the appropriate agent
+   - Work with several agents simultaneously
+   - Review agent activity and results
+   - Coordinate specialized AI workers from one interface
+
+   Emphasize that this is not intended to be another generic AI chat window. It is designed as a control plane for managing specialized AI agents.
+
+10. Example Engineering Workflow
+    Create a visual workflow:
+
+    Engineering Task
+          ↓
+    Implementation Agent
+          ↓
+    Terraform / Infrastructure Agent
+          ↓
+    Security Review Agent
+          ↓
+    Code Review Agent
+          ↓
+    Documentation Agent
+          ↓
+    Human Review / Approval
+
+    Explain that some of these agents may also work in parallel rather than sequentially.
+
+11. Why This Matters
+    Focus on organizational and engineering benefits:
+    - Capture reusable engineering knowledge
+    - Reduce repetitive prompting
+    - Standardize common engineering workflows
+    - Allow specialists to review work independently
+    - Enable multiple tasks to happen in parallel
+    - Make AI capabilities reusable across teams
+    - Keep humans responsible for direction and final decisions
+
+    Include the concept that organizational knowledge currently living in documentation, procedures, or individual engineers' experience can increasingly be represented as reusable agent skills.
+
+12. Live Demo
+    Create a simple transition slide titled:
+    "From Concept to Practice"
+
+    Include:
+    - Meet the agents
+    - Inspect personas and skills
+    - Dispatch a real engineering task
+    - Run multiple agents
+    - Compare specialized perspectives
+    - Review the final result
+
+Throughout the presentation, reinforce this simple mental model:
+
+Model = Intelligence
+Persona = Role
+Skill = Expertise / Procedure
+Agent = Model + Persona + Skills + Tools + Context
+Orchestrator = Manager / Control Plane for Agents
+
+The presentation should not imply that AI agents replace engineers. Present them as specialized tools and collaborators that engineers direct, supervise, and review.
+
+Use language appropriate for an internal engineering organization. Avoid marketing language and exaggerated claims about AI. Keep the tone practical, technical, and focused on how agent specialization and orchestration can improve engineering workflows.
+
+End the informational portion with this central idea:
+
+"The goal is not to create more AI chat windows. The goal is to create reusable AI capabilities by combining specialized agents, organizational knowledge, and human direction."
+
+The final slide should naturally transition into a live demonstration of the internal agent orchestration application.
