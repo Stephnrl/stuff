@@ -1,24 +1,26 @@
-Create a professional 10–12 slide internal presentation about AI agents, personas, skills, and agent orchestration. The audience is a small group of technical and semi-technical employees who already use AI/Copilot but may not understand custom agents, reusable skills, or multi-agent systems.
+Create a professional 10–12 slide internal presentation about AI agents, personas, skills, and agent orchestration.
+
+Audience: technical and semi-technical employees who already use AI/Copilot but may not understand custom agents, reusable skills, or multi-agent workflows.
 
 The presentation should educate the audience before a live demo of an internal AI agent orchestration terminal I developed.
 
-Tell this story:
+Cover these topics:
 
-1. How we use AI today: general-purpose chat, repeated prompting and context.
+1. How AI is commonly used today: general-purpose chat, repeated prompting, repeated context.
 2. What is an AI agent?
-   Agent = AI Model + Persona + Skills + Tools + Context.
-3. Persona = the agent’s role/responsibility. Examples: Terraform Engineer, Security Engineer, AKS Engineer, Code Reviewer, Documentation Engineer.
-4. Skill = a reusable procedure or expertise the agent can apply. Examples: Terraform review, AKS troubleshooting, security review, CI/CD analysis.
-5. Clearly explain: Persona = WHO the agent is. Skill = HOW it performs a task.
-6. Show how personas + skills create specialized agents.
-7. Explain why multiple agents are useful: specialization, focused context, parallel work, independent review, consistency, reusable knowledge.
-8. Explain agent orchestration as managing and coordinating multiple specialized agents from one control plane.
-9. Introduce my internal terminal-based orchestrator: create agents, assign personas/skills, launch multiple sessions, dispatch tasks, monitor agents, and manage them from one interface.
-10. Show an engineering workflow such as Developer Agent → Infrastructure Agent → Security Reviewer → Code Reviewer → Human Approval.
-11. Benefits: reusable engineering knowledge, reduced repetitive prompting, standardized workflows, parallelism, and human oversight.
+   Agent = Model + Persona + Skills + Tools + Context.
+3. Persona = the agent’s role and responsibility. Examples: Terraform Engineer, Security Engineer, AKS Engineer, Code Reviewer.
+4. Skill = reusable expertise or a repeatable procedure. Examples: Terraform review, AKS troubleshooting, security review, CI/CD analysis.
+5. Explain clearly: Persona = WHO the agent is. Skill = HOW it performs a task.
+6. Show how personas and skills create specialized agents.
+7. Benefits of multiple agents: specialization, focused context, parallel work, independent review, consistency, and reusable knowledge.
+8. Explain agent orchestration as coordinating multiple specialized agents from one control plane.
+9. Introduce my terminal-based orchestrator: create agents, assign personas/skills, launch sessions, dispatch tasks, monitor agents, and manage them from one interface.
+10. Show an example workflow: Developer Agent → Infrastructure Agent → Security Reviewer → Code Reviewer → Human Approval.
+11. Explain benefits to engineering teams: reusable knowledge, less repetitive prompting, standardized workflows, parallelism, and human oversight.
 12. End with a “From Concept to Practice” slide that transitions into the live demo.
 
-Use clean, modern visuals and simple diagrams. Avoid marketing hype and excessive text.
+Use clean, modern visuals, simple diagrams, minimal text, and a practical technical tone. Avoid marketing hype.
 
 Reinforce:
 Model = Intelligence
