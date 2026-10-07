@@ -91,4 +91,78 @@ SAY: "It's an open standard. We write a skill once and
 - "A persona is a role description, like one for a new
   hire: your role, your standards, what you never do."
 - Point at Hard limits: "This matters most. No cloud
-  credentials,
+  credentials, never applies infrastructure. A person
+  approves."
+- "My junior and senior DevOps kits share the exact same
+  skills. The junior runs on a cheaper model and stops at
+  IAM, networking and state, then flags its PR for senior
+  review. Same procedures, different judgment."
+> "So how do I put a persona and skills together?
+   That's a kit."
+
+======================================================
+8. KIT - one JSON file
+======================================================
+SAY: "A kit bundles everything for one role into a
+      single JSON file."
+- Read the RIGHT column, not the JSON: who it is,
+  procedures, team rules, the only tools it gets, model.
+- "Think of it as the job description plus the toolbox
+  for one hire."
+- "Change the kit file, and every agent started after
+  that gets the change."
+> "Here are the kits we run today."
+
+======================================================
+9. OUR KITS
+======================================================
+SAY: "These are the five roles we run in sncfleet.ai
+      today."
+- Don't walk all five. Pick one, tell one real story:
+  [ ] ________________________________________________
+- Dark card: "A new role isn't a new tool. It's a
+  persona file and a JSON file, reviewed in a PR."
+> "So what happens when I actually start one?"
+
+======================================================
+10. FROM KIT TO PULL REQUEST
+======================================================
+SAY: "Every agent goes from a kit to a pull request."
+- Quick, left to right: "Pick a kit. It gets its own
+  branch or container. Persona and skills copied in.
+  It works. It ends with commits a person reviews."
+- Bottom notes: "I can run several at once in separate
+  tabs, and none of them ever holds a real credential."
+> "That leads to the question everyone asks: can we
+   trust it?"
+
+======================================================
+11. GUARDRAILS
+======================================================
+SAY: "Skills can run commands, so we treat them like
+      code."
+- "The IBM video calls out real risks, like prompt
+  injection and tool poisoning. So the design assumes
+  the agent can be wrong."
+- Point at TWO cards only: "It never holds real
+  credentials, and a person always merges. Nothing
+  reaches a live environment without review."
+- Let them read the rest.
+  [ ] confirm all six cards match the work version
+> "So what does this mean for us?"
+
+======================================================
+12. WHAT THE ORGANIZATION GETS
+======================================================
+SAY: "Here's what the organization gets."
+- Consistency:  "Our best engineer's approach becomes
+                 the default."
+- Auditability: "Procedures in git, work arrives as
+                 reviewable commits. Matters for CMMC."
+- Portability:  "Open standard, no vendor lock-in."
+- Cost:         "Routine work on cheaper models; only
+                 hard problems on the strongest."
+* "That's the idea. Now let me show you what it looks
+   like in practice."
+
+>>> STOP SHARING SLIDES -> SHARE TERMINAL WINDOW <<<
