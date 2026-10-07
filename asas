@@ -1,0 +1,94 @@
+SKILLS, PERSONAS & KITS - TALK TRACK
+* = memorize   [ ] = fill in before presenting
+
+======================================================
+1. COVER - Skills, Personas & Kits
+======================================================
+* "Today I want to show you how I've been teaching AI
+   agents to work the way our team works, not like a
+   generic chatbot."
+- Three parts: what skills are, the persona layer I
+  added + kits, then a live demo of sncfleet.ai.
+- Point at the right panel: "That's the whole talk in
+  four lines: who it is, how it works, what it knows,
+  what it can touch."
+> "Let's start with the problem."
+
+======================================================
+2. THE PROBLEM - Models know facts, not our work
+======================================================
+SAY: "These models know a lot of facts. What they
+      don't know is how we work."
+- Point at the PR checklist line: "Ask a model to
+  review a PR and you get a generic review. It has no
+  idea what our checklist is or what we never allow."
+- "Today we paste instructions in every time, and it
+  comes out different every time."
+> "So where does an agent's knowledge come from?"
+
+======================================================
+3. FOUR KINDS OF KNOWLEDGE
+======================================================
+SAY: "An agent draws on four kinds of knowledge."
+- Left to right, one phrase each:
+  model = what it already knows
+  MCP   = tools, how it reaches GitHub or Jira
+  RAG   = facts it looks up
+  skills = procedures, how we do things
+- "If MCP gives it the hands to open a PR, a skill
+  tells it how we write one."
+- Dark card: "This is what I added: a persona. Who it
+  is while it works. I'll come back to that."
+> "First, what does a skill actually look like?"
+
+======================================================
+4. A SKILL IS JUST A FOLDER
+======================================================
+SAY: "A skill is just a folder with a Markdown file
+      in it."  (pause - this surprises people)
+- Point at the description line: "Most important line.
+  The agent reads it to decide whether to use the
+  skill: what it does and when to use it."
+- "Below that, the procedure in plain English.
+  Optional scripts and docs."
+- "This one is real: read-only Kubernetes triage. It
+  never touches the cluster; it tells you the next
+  command to run."
+> "It's just files, so it lives in git and gets
+   reviewed like code. What happens when an agent has
+   a lot of them?"
+
+======================================================
+5. PROGRESSIVE DISCLOSURE
+======================================================
+SAY: "An agent only reads what the task needs."
+- "Like a table of contents. At startup it reads only
+  the titles, about 100 tokens per skill. When a task
+  matches, it opens that one chapter. Scripts and docs
+  only if a step needs them."
+- "So we can give it hundreds of skills without
+  slowing it down or running up the bill."
+> "And these skills aren't tied to one product."
+
+======================================================
+6. OPEN STANDARD - agentskills.io
+======================================================
+SAY: "It's an open standard. We write a skill once and
+      use it anywhere."
+- "Anthropic created it and released it openly. Copilot,
+  VS Code, Cursor, Gemini CLI, Codex and more read it."
+- LEADERSHIP: "If we change tools next year, our skills
+  come with us."
+- Say you'll show agentskills.io in the demo. Keep it
+  short.
+> "Skills tell an agent how. But something was still
+   missing."
+
+======================================================
+7. PERSONA - Skills say how, a persona says who
+======================================================
+* "Skills say how. A persona says who."
+- "A persona is a role description, like one for a new
+  hire: your role, your standards, what you never do."
+- Point at Hard limits: "This matters most. No cloud
+  credentials,
