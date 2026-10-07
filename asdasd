@@ -1,0 +1,285 @@
+SKILLS, PERSONAS & KITS - FULL PRACTICE SCRIPT
+(pause) = take a breath   [ ] = fill in with your own words
+
+------------------------------------------------------
+SLIDE 1 - COVER
+------------------------------------------------------
+Thanks, everyone. Today I want to show you how I've been
+teaching AI agents to work the way our team works, not
+like a generic chatbot.
+
+I've split this into three parts. First, I'll explain
+what agent skills are, since some of you may not have
+heard the term. Second, I'll show you the piece I've
+added on top, which I call a persona, and how I bundle
+everything together into what I call kits. And third,
+I'll do a live demo of sncfleet.ai, the terminal app I
+use to run these agents on real work.
+
+If you look at the panel on the right, that's really the
+whole talk in four lines: who the agent is, how it
+works, what it knows, and what it's allowed to touch.
+
+(pause) Let's start with the problem.
+
+------------------------------------------------------
+SLIDE 2 - THE PROBLEM
+------------------------------------------------------
+These AI models know a lot of facts. They know what
+Terraform is, they know what CMMC is, they can write C#.
+What they don't know is how we work.
+
+Here's an example. If I ask a model to review one of our
+pull requests, I'll get a review. But it'll be a generic
+one. It has no idea what our checklist is, what our
+pipeline gates are, or the things we never allow.
+
+Today, the way most people fix that is by pasting a long
+set of instructions into the chat every single time. And
+the result is different every time, depending on who
+wrote the instructions and what they remembered to
+include.
+
+(pause) So where does an agent's knowledge actually
+come from?
+
+------------------------------------------------------
+SLIDE 3 - FOUR KINDS OF KNOWLEDGE
+------------------------------------------------------
+There's a good IBM video on this that breaks it into
+four kinds of knowledge an agent can draw on.
+
+The first is what's already in the model, everything it
+learned in training.
+
+The second is tools. That's MCP, the Model Context
+Protocol. It's how an agent reaches out to GitHub, to
+Jira, or to a scanner.
+
+The third is facts it looks up. That's retrieval: pulling
+in current documents it was never trained on.
+
+And the fourth is procedures. How a task actually gets
+done: the steps, the order, the judgment. That's what
+skills add.
+
+A simple way to think about it: if MCP gives the agent
+the hands to open a pull request, a skill tells it how
+we write one.
+
+(point at the dark card) And this last card is what I've
+added: a persona. Who the agent is while it's doing the
+work. I'll come back to that in a minute.
+
+(pause) First, let's look at what a skill actually is.
+
+------------------------------------------------------
+SLIDE 4 - A SKILL IS JUST A FOLDER
+------------------------------------------------------
+A skill is just a folder with a Markdown file in it.
+
+(pause)
+
+That surprises people. It's not a model, it's not a
+plugin, it's not a service. It's a text file called
+SKILL.md.
+
+At the top there are two required fields. The name. And
+the description. (point) The description is the most
+important line in the whole file. The agent reads it to
+decide whether to use the skill, so it says what the
+skill does and when to use it.
+
+Below that is the procedure itself, written in plain
+English. And optionally, the folder can hold scripts the
+agent can run and reference docs it can read.
+
+This example is a real skill from my library. It does
+read-only Kubernetes triage. You give it the output of a
+failing pod, and it tells you what's wrong and the next
+command to run. It never touches the cluster itself.
+
+Because it's just files, it lives in git. It gets
+reviewed in pull requests and has history, like any
+other code.
+
+(pause) So what happens when an agent has a lot of these?
+
+------------------------------------------------------
+SLIDE 5 - PROGRESSIVE DISCLOSURE
+------------------------------------------------------
+An agent only reads what the task needs.
+
+Think of it like the table of contents in a book. When
+the agent starts up, it reads only the chapter titles:
+the name and description of each skill. That's about a
+hundred tokens per skill, which is tiny.
+
+When a task matches one of those descriptions, it opens
+that one chapter and reads the full instructions.
+
+And only if a specific step needs it does it pull in a
+script or a reference document.
+
+What that means for us is that we can give an agent
+hundreds of skills without slowing it down or running up
+the bill. It only pays for what it actually uses.
+
+(pause) And these skills aren't tied to one product.
+
+------------------------------------------------------
+SLIDE 6 - OPEN STANDARD
+------------------------------------------------------
+Agent Skills is an open standard. Anthropic created the
+format and released it openly, and now a long list of
+tools read it: GitHub Copilot, VS Code, Cursor, Gemini
+CLI, OpenAI's Codex, and plenty more.
+
+For us, the point is simple. We write a skill once and
+use it anywhere. If we change tools next year, our
+skills come with us. We're not locked into a vendor.
+
+The spec lives at agentskills.io, and I'll pull it up
+during the demo.
+
+(pause) So skills tell an agent how to do something. But
+for me, something was still missing.
+
+------------------------------------------------------
+SLIDE 7 - PERSONA
+------------------------------------------------------
+Skills say how. A persona says who.
+
+(pause)
+
+A persona is basically a role description, the same
+kind you'd write for a new hire. It says: here's your
+role, here are the standards you work to, and here's
+what you never do.
+
+(point at Hard limits) This last one is the one that
+matters most. My DevOps persona has no cloud
+credentials, and it never applies infrastructure. It
+writes the code and the pipeline, and a person approves.
+
+Here's why personas matter. I have a junior DevOps kit
+and a senior DevOps kit. They share the exact same
+skills. The difference is the persona and the model. The
+junior runs on a cheaper model and handles well-scoped
+work, like lint fixes and version bumps. When it hits
+anything involving permissions, networking or
+infrastructure state, it stops and flags the pull
+request for senior review.
+
+Same procedures. Different judgment.
+
+(pause) So how do I put a persona and its skills
+together? That's a kit.
+
+------------------------------------------------------
+SLIDE 8 - KIT
+------------------------------------------------------
+A kit bundles everything for one role into a single JSON
+file.
+
+(point at the right column) It says who the agent is,
+which skills it can pick up, which team rules it reads
+every session, the only tools it's allowed to use, and
+which model it runs on.
+
+The easiest way to think about it: a kit is the job
+description plus the toolbox for one hire.
+
+And because it's one file, if I change the kit, every
+agent I start after that gets the change.
+
+(pause) Here are the kits we're running today.
+
+------------------------------------------------------
+SLIDE 9 - OUR KITS
+------------------------------------------------------
+These are the five roles we run in sncfleet.ai today:
+DevSecOps, PR reviewer, CMMC analyst, security engineer,
+and .NET developer.
+
+I won't go through every one, but let me give you one
+real example.
+[ Your story: which kit, what you asked it to do, and
+  what happened. 2-3 sentences. ]
+
+(point at the dark card) And the important thing here:
+adding a new role doesn't mean building a new tool. It's
+a persona file and a JSON file, reviewed in a pull
+request like any other change.
+
+(pause) So what actually happens when I start one?
+
+------------------------------------------------------
+SLIDE 10 - FROM KIT TO PULL REQUEST
+------------------------------------------------------
+Every agent goes from a kit to a pull request.
+
+I pick a kit. The agent gets its own branch, or its own
+container, so it can't step on anyone else's work. The
+persona, skills and team rules get copied in, and it's
+limited to the tools the kit names. Then it does the
+work, pulling in skills as it needs them. And it ends
+with commits on its own branch that a person reviews and
+merges.
+
+Two design choices worth calling out. (point) I can run
+several agents at once, each in its own tab. And none of
+them ever holds a real credential. The agent gets a
+stand-in token, and the real credentials stay on my
+machine.
+
+(pause) Which leads to the question everyone asks: can
+we trust it?
+
+------------------------------------------------------
+SLIDE 11 - GUARDRAILS
+------------------------------------------------------
+Skills can run commands, so we treat them like code.
+
+The IBM video is upfront about the risks, things like
+prompt injection and tool poisoning. So the whole design
+assumes the agent can be wrong.
+
+(point at two cards) The two that matter most: it never
+holds real credentials, and a person always merges.
+Nothing it does reaches a live environment without
+review.
+
+The rest is here for you to read: least tools, skills
+reviewed in PRs, kits scanned for secrets, and guardrail
+hooks with an audit trail.
+
+(pause) So what does this mean for us as an
+organization?
+
+------------------------------------------------------
+SLIDE 12 - WHAT THE ORGANIZATION GETS
+------------------------------------------------------
+Four things.
+
+Consistency. The way our best engineer does a task
+becomes the default, instead of depending on who's on
+shift.
+
+Auditability. The procedures live in git, and
+everything an agent does arrives as commits a person
+reviews. That matters for CMMC.
+
+Portability. It's an open standard, so we're not betting
+on one vendor.
+
+And cost. Each kit picks its model, so routine work runs
+on cheaper models and only the hard problems use the
+strongest one.
+
+(pause)
+
+That's the idea. Now let me show you what it looks like
+in practice.
+
+>>> STOP SHARING SLIDES -> SHARE TERMINAL WINDOW <<<
