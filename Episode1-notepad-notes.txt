@@ -1,0 +1,190 @@
+A TEAM OF AGENTS - EPISODE 1 - NOTEPAD NOTES
+* = memorize   [ ] = fill in before presenting   > = bridge to next slide
+
+======================================================
+1. COVER - A team of agents
+======================================================
+- Leave up while people join.
+- NO intro, NO agenda. Click and go straight into the story.
+
+======================================================
+2. THE TICKET (hook)
+======================================================
+* "A while back I picked up what looked like a simple
+   ticket: create a least-privilege IAM role for our
+   developers."
+- Walk the 4 boxes: draft -> submit in ServiceNow ->
+  findings (too broad / no justification) -> fix,
+  resubmit, wait again.
+  [ ] how many rounds this usually takes / how long each waits
+- HOOK (slow): "This time, it was approved on the first
+  request. No revisions."
+- OVERVIEW: "In the next 15 minutes I'll show you how:
+  the team of AI specialists I built, how they work,
+  and then we'll run one live."
+> "But the IAM policy was never really the problem."
+
+======================================================
+3. THE REAL PROBLEM - handoffs
+======================================================
+SAY: "The work isn't slow. The handoffs are."
+- Experts on other teams, each with a queue. A 10-minute
+  answer sits for days. Feedback arrives after I've
+  moved on.
+- CREDIBILITY: "My day job is hardening our AWS baseline
+  and running EKS. I still learned some of our standards
+  only when the review came back."
+- WISH I'D KNOWN: "The standards existed. I just didn't
+  have them in front of me while I worked."
+> "So I tried to fix that with AI. It didn't work the
+   first time."
+
+======================================================
+4. THREE THINGS I TRIED (journey)
+======================================================
+SAY: "I tried three things."
+- MISTAKE: generic chatbot -> confident, broad IAM policy,
+  exactly what security sends back. "My mistake was
+  trusting an answer that didn't know our standards."
+- Pasted our standards in -> better, but different every
+  time, gone next session.
+- Gave the agent a ROLE -> this worked.
+> "That third step has two pieces. First, skills."
+
+======================================================
+5. SKILLS IN ONE MINUTE
+======================================================
+SAY: "A skill teaches an agent how we do a task."
+- A folder with a Markdown file: name, when to use it,
+  the steps. Loaded only when a task matches. Open
+  standard: Copilot, VS Code, Cursor and more.
+- TEASER: "Building your own skills is Episode 2."
+> "Skills solved the how. They didn't solve the who."
+
+======================================================
+6. PERSONA - the problem it solves
+======================================================
+SAY: "A generic AI answers like nobody in particular."
+- Left card: answers anything, doesn't know where to stop,
+  same answer for a developer or an auditor.
+- Right card: thinks like our security team. Our
+  standards, knows its limits, flags what needs a person.
+  "A role description, like one for a new hire."
+* "Skills say how. A persona says who."
+> "Put a persona and its skills together, you get a kit."
+
+======================================================
+7. KIT - a specialist in one file
+======================================================
+SAY: "A kit is a specialist, defined in one file."
+- Read the RIGHT column, not the JSON: who it is, skills,
+  team rules, the only tools it gets, model.
+- "Job description plus the toolbox for one hire. I pick
+  a kit, and that's who shows up."
+> "So here's the team I've hired."
+
+======================================================
+8. MEET MY TEAM
+======================================================
+SAY: "Meet my team."
+- Two do the work (devsecops, dotnet-developer). Three give
+  me a first pass I'd otherwise wait days for: security,
+  compliance, PR review.
+- SAY PLAINLY: "They don't replace those teams. They make
+  sure my work is already right when it reaches them."
+- Dark card: new specialist = persona file + JSON file.
+> "So let's go back to that IAM ticket."
+
+======================================================
+9. THE SAME TICKET, WITH MY SECURITY ENGINEER
+======================================================
+SAY: "Same ticket, but this time I had my security
+      engineer."
+- Walk the 4 steps: agent drafts to our standard ->
+  agent justifies every permission -> I review and
+  submit in ServiceNow -> security approves.
+- RESULT (slow): "About a day of work. One request. Zero
+  revisions."
+- "Security still approved it. The agent didn't skip the
+  review. It got the work right before it reached them."
+> "And it isn't just approvals."
+
+======================================================
+10. BOTTLEROCKET ON EKS
+======================================================
+SAY: "It isn't just approvals. It's the work itself."
+- Moved EKS nodes to Bottlerocket with FIPS. Testing
+  normally takes weeks: FIPS, workloads, DNS, logs.
+- "With my agents planning the tests, reading the output
+  and chasing failures: about two days."
+  [ ] one specific thing the agent caught or solved
+> "Which raises the fair question: can we trust it?"
+
+======================================================
+11. GUARDRAILS
+======================================================
+SAY: "Agents prepare the work. People still approve it."
+- Point at TWO cards: no real credentials, a person
+  always merges. Let them read the rest.
+  [ ] confirm all six cards match the work version
+> "So what does this change for us?"
+
+======================================================
+12. WHAT CHANGES FOR US
+======================================================
+- First-pass approvals (like the IAM request)
+- Days, not weeks (like Bottlerocket)
+- Auditable (git + reviewable commits; matters for CMMC)
+- Right-sized cost (cheap models for routine work)
+* "Let me show you. I'm going to hand an overly broad IAM
+   policy to my security engineer, live."
+
+>>> STOP SHARING SLIDES -> SHARE TERMINAL WINDOW <<<
+
+
+======================================================
+LIVE DEMO PLAN (about 5 minutes)
+======================================================
+BEFORE THE CALL
+- Terminal font up a few sizes; window roughly 16:9.
+- Sample policy and prompt ready in a text file to paste.
+- Use a made-up app, bucket and account. Nothing real.
+- Record a backup run in case the network or gateway
+  misbehaves.
+
+STEP 1 - Start the specialist
+- sncfleet.ai -> New agent -> pick the security-engineer kit.
+- Point out: persona, skills, the MCP servers it gets.
+
+STEP 2 - Hand it the broad policy (paste):
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": "s3:*",
+    "Resource": "*"
+  }]
+}
+
+PROMPT (paste):
+  Developers on the reports-app team need to read and
+  upload objects in the reports-app-dev bucket, and
+  nothing else. Review this policy against our
+  least-privilege standard, tighten it, and write the
+  justification for a security request.
+
+- While it works: "This is the part that used to come
+  back from security as findings."
+- Point out: narrowed actions, specific resources, and
+  the written justification.
+
+STEP 3 (optional) - The handoff
+- New agent -> cmmc-analyst kit. Ask:
+  Which CMMC practices does this change touch, and what
+  evidence should we keep?
+- "That's a second opinion from a second specialist, in
+  a minute instead of a meeting."
+
+CLOSE
+* "That's Episode 1. Next time: how to build your own
+   skills. Questions?"

@@ -1,0 +1,278 @@
+A TEAM OF AGENTS - EPISODE 1 - FULL PRACTICE SCRIPT
+Read this out loud 2-3 times, then switch to the Notepad notes.
+(pause) = take a breath   [ ] = fill in with your own words
+About 13-15 minutes, plus the demo.
+
+------------------------------------------------------
+SLIDE 1 - COVER
+------------------------------------------------------
+(Leave this up while people join. When you start, click
+to the next slide and begin with the story. No intro.)
+
+------------------------------------------------------
+SLIDE 2 - THE TICKET
+------------------------------------------------------
+A while back, I picked up what looked like a simple
+ticket: create a least-privilege IAM role for our
+developers.
+
+If you've done one of these, you know the path. You
+write the role and the policy. You submit it to the
+security team through ServiceNow. And it comes back.
+Too broad. Or missing a justification. So you fix it,
+resubmit it, and wait again.
+[ Add your real number: "That usually takes ___ rounds,
+  and each one sits in the queue for ___." ]
+
+(pause)
+
+This time, it was approved on the first request. No
+revisions.
+
+In the next fifteen minutes, I'll show you how that
+happened: the team of AI specialists I built, how they
+work, and then we'll run one live.
+
+(pause) But the IAM policy was never really the problem.
+
+------------------------------------------------------
+SLIDE 3 - THE REAL PROBLEM
+------------------------------------------------------
+The work isn't slow. The handoffs are.
+
+The people who know our security and compliance
+standards sit on other teams, and each team has its own
+queue. A question that takes them ten minutes to answer
+can sit there for days. And by the time the feedback
+comes back, I've moved on to something else and have to
+switch back.
+
+And this isn't about being new to the work. My day job
+is hardening our AWS baseline and running our EKS
+clusters. I still learned some of our standards only
+when the review came back.
+
+What I wish I'd known earlier: the standards existed. I
+just didn't have them in front of me while I was doing
+the work.
+
+(pause) So I tried to fix that with AI. It didn't work
+the first time.
+
+------------------------------------------------------
+SLIDE 4 - THREE THINGS I TRIED
+------------------------------------------------------
+I tried three things.
+
+First, a generic chatbot. I asked it for an IAM policy,
+and it gave me one, very confidently. It was exactly the
+kind of broad policy security sends back. That was my
+mistake: I trusted an answer that didn't know our
+standards.
+
+Second, I pasted our standards into the chat. That was
+better. But it came out different every time, and it was
+gone the next session.
+
+Third, I gave the agent a role. An agent that knows our
+standards and has the skills to apply them. That's what
+worked.
+
+(pause) That third step has two pieces. First, skills.
+
+------------------------------------------------------
+SLIDE 5 - SKILLS IN ONE MINUTE
+------------------------------------------------------
+A skill teaches an agent how we do a task.
+
+It's just a folder with a Markdown file in it: a name, a
+description of when to use it, and the steps. The agent
+reads only the descriptions at first, and opens a skill
+when a task matches, so it can carry a lot of them. And
+it's an open standard, so the same skill works in
+Copilot, VS Code, Cursor and others.
+
+I won't go deeper today. Building your own skills is
+Episode 2.
+
+(pause) Skills solved the how. They didn't solve the who.
+
+------------------------------------------------------
+SLIDE 6 - PERSONA
+------------------------------------------------------
+Here's the problem a persona solves: a generic AI
+answers like nobody in particular.
+
+When I need a security answer, I don't want a general
+opinion. A generic assistant will answer anything. It
+doesn't know where to stop. And it gives a developer and
+an auditor the same answer.
+
+(point at the right card) What I want is someone who
+thinks like our security team. Someone who applies our
+standards every time, knows their limits, and tells me
+what still needs a person.
+
+That's a persona. It's a role description, the same kind
+you'd write for a new hire.
+
+(pause)
+
+Skills say how. A persona says who.
+
+(pause) And when you put a persona and its skills
+together, you get a kit.
+
+------------------------------------------------------
+SLIDE 7 - KIT
+------------------------------------------------------
+A kit is a specialist, defined in one file.
+
+(point at the right column) It says who the agent is,
+which skills it can use, the team rules it always reads,
+the only tools it's allowed to touch, and which model it
+runs on.
+
+Think of it as the job description plus the toolbox for
+one hire. When I start an agent in sncfleet.ai, I pick a
+kit, and that's who shows up.
+
+And because it's one file, if I change the kit, every
+agent I start after that gets the change.
+
+(pause) So here's the team I've hired.
+
+------------------------------------------------------
+SLIDE 8 - MEET MY TEAM
+------------------------------------------------------
+Meet my team.
+
+Two of them do the hands-on work: the DevSecOps engineer
+and the .NET developer. The other three give me a first
+pass that I'd otherwise wait days for. The security
+engineer, before the security review. The CMMC analyst,
+before compliance. And the PR reviewer, before a
+teammate looks at it.
+
+And I want to be clear about this: they don't replace
+those teams. They make sure that when my work reaches
+those teams, it's already right.
+
+(point at the dark card) And adding a new specialist
+isn't building a new tool. It's a persona file and a
+JSON file, reviewed like any other change.
+
+(pause) So let's go back to that IAM ticket.
+
+------------------------------------------------------
+SLIDE 9 - THE SAME TICKET
+------------------------------------------------------
+Same ticket. But this time, I had my security engineer.
+
+I started an agent with the security-engineer kit and
+told it what our developers needed to do. It drafted the
+policy to our least-privilege standard. It explained
+every permission, and it wrote the justification that
+security would ask for. Then I reviewed it, adjusted
+what I wanted, and submitted it in ServiceNow.
+
+(pause)
+
+About a day of work. One request. Zero revisions from
+the security team.
+
+(point at step 4) And notice who approved it: the
+security team. The agent didn't skip the review. It got
+the work right before it reached them.
+
+(pause) And it isn't just approvals.
+
+------------------------------------------------------
+SLIDE 10 - BOTTLEROCKET
+------------------------------------------------------
+It's the work itself, too.
+
+We moved our EKS nodes to Bottlerocket, with FIPS.
+Testing a new node OS normally takes weeks. Does FIPS
+work? Do our workloads run on it? Does DNS resolve? Do
+the logs arrive, and do they check out?
+
+With my agents helping me plan the tests, read the
+output and chase down the failures, it took about two
+days.
+[ Optional: one specific thing the agent caught or
+  solved. ]
+
+(pause) Which raises a fair question: can we trust it?
+
+------------------------------------------------------
+SLIDE 11 - GUARDRAILS
+------------------------------------------------------
+Agents prepare the work. People still approve it.
+
+Agents can be wrong, and skills can run commands, so the
+design assumes mistakes will happen.
+
+(point at two cards) The two that matter most: the agent
+never holds real credentials, and a person always
+merges. Nothing it does reaches a live environment
+without review.
+
+The rest is here for you to read: it only gets the tools
+its kit names, skills are reviewed like code, kits are
+scanned for secrets, and there are guardrail hooks and
+an audit trail.
+
+(pause) So what does this change for us?
+
+------------------------------------------------------
+SLIDE 12 - WHAT CHANGES FOR US
+------------------------------------------------------
+Four things.
+
+First-pass approvals. Our work reaches security and
+compliance already meeting our standards, like that IAM
+request.
+
+Days, not weeks. Like Bottlerocket: weeks of testing in
+two days.
+
+Auditable by default. Our procedures live in git, and
+everything an agent does arrives as commits a person
+reviews. That matters for CMMC.
+
+And right-sized cost. Routine work runs on cheaper
+models, and only the hard problems use the strongest
+one.
+
+(pause)
+
+Let me show you. I'm going to hand an overly broad IAM
+policy to my security engineer, live.
+
+>>> STOP SHARING SLIDES -> SHARE TERMINAL WINDOW <<<
+
+------------------------------------------------------
+DEMO (talk while it works)
+------------------------------------------------------
+I'm starting a new agent and picking the security-
+engineer kit. You can see what comes with it: the
+persona, its skills, and the only tools it's allowed.
+
+Here's a policy that allows everything in S3, on every
+bucket. And here's what the developers actually need:
+read and upload in one bucket, nothing else.
+
+(paste the prompt, let it run)
+
+This is the part that used to come back from security as
+findings. Watch what it does: it narrows the actions, it
+pins the resources, and it writes the justification.
+
+(optional) And if I want a compliance view, I start a
+second specialist, the CMMC analyst, and ask which
+practices this touches. That's a second opinion in a
+minute instead of a meeting.
+
+That's Episode 1. Next time: how to build your own
+skills. Questions?
