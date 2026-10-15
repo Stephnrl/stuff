@@ -1,0 +1,10 @@
+{
+  "target": "copilot-cli",
+  "mode": "investigate",
+  "outcome": "Find the reason a GitHub Actions job fails intermittently",
+  "context": "The job uses self-hosted runners and fails on some runs after checkout",
+  "scope": ["Read workflow files and the logs supplied in this session"],
+  "restrictions": ["No workflow edits", "No credential access"],
+  "evidence": ["Identify failing step and cite relevant output", "Propose a minimal next test"],
+  "approval_gate": "Stop before changing runners, workflows, or repository settings"
+}
