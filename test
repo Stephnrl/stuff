@@ -1,17 +1,15 @@
-SONAR=https://sonarqube.example.com
-KEY=YOUR_PROJECT_KEY
-AUTH="-u $SONAR_TOKEN:"
+ENT=octo-enterprise
+HOST=github.com   # or your GHES / ghe.com hostname
 
-# Branches and PRs, with last analysis dates
-curl -s $AUTH "$SONAR/api/project_branches/list?project=$KEY" | jq '.branches | length, (.[] | {name, analysisDate})'
-curl -s $AUTH "$SONAR/api/project_pull_requests/list?project=$KEY" | jq '.pullRequests | length'
-
-# Number of retained analyses (snapshots) on the main branch
-curl -s $AUTH "$SONAR/api/project_analyses/search?project=$KEY&ps=1" | jq '.paging.total'
-
-# Issue count
-curl -s $AUTH "$SONAR/api/issues/search?componentKeys=$KEY&ps=1" | jq '.total'
-
-# Recent CE task durations for this project only
-curl -s $AUTH "$SONAR/api/ce/activity?component=$KEY&ps=20" \
-  | jq '.tasks[] | {submittedAt, status, branch, pullRequest, executionTimeMs}'
+gh api graphql --hostname "$HOST" --paginate \
+  -f slug="$ENT" -f query='
+query($slug: String!, $endCursor: String) {
+  enterprise(slug: $slug) {
+    organizations(first: 100, after: $endCursor) {
+      pageInfo { hasNextPage endCursor }
+      nodes { login name createdAt url }
+    }
+  }
+}' \
+  --jq '.data.enterprise.organizations.nodes[] | [.login, .name, .createdAt, .url] | @csv' \
+  > "${ENT}-orgs.csv"
