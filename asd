@@ -1,52 +1,66 @@
-Corrections to the proposed split
+# Why I Chose Rust for AI-Assisted Software Development
 
-Lite shouldn’t do linting or formatting. ruff, prettier, shellcheck, hadolint, terraform fmt/validate, tflint and kubeconform are faster, cost zero tokens, and are never wrong about syntax. Run them in hooks or CI. Lite is better used for small judgment tasks that tools can’t do:
+**Engineering Journal — Initial Thoughts**
 
-Triaging and summarizing long logs or CI output before it reaches Smart’s context
-Classifying or routing incoming tasks
-Extracting structured data, such as turning kubectl describe output into JSON
-Writing commit messages, PR descriptions, and changelog entries
-Broad file and code search where only the conclusion matters
+## Background
 
-Max shouldn’t be the “tester.” Tests are run by tools. Max is valuable for designing the test strategy and for diagnosing failures that Smart couldn’t explain.
+As I've continued exploring software development with AI coding agents, I've become increasingly interested in what makes a programming language suitable for AI-assisted engineering.
 
-A split that works well
-Role	Model	When
-Plan, architecture, risk review	Max	Once at the start, and once on the final diff for risky changes
-Implementation, iteration, fixing	Smart	The bulk of the work
-Summarize, classify, draft text	Lite	High volume, low stakes
-Lint, format, validate, test	Tooling	Always
+AI can generate code in nearly any popular language. However, generating code is only one part of software engineering. The more important questions are whether that code is correct, secure, maintainable, efficient, and capable of evolving over time.
 
-Escalate to Max when:
+This is what led me to explore Rust.
 
-Smart fails the same task twice
-The change touches state that’s hard to undo, such as Terraform applies that destroy resources, DB migrations, IAM/RBAC, or networking
-The work involves concurrency, security boundaries, or distributed-systems behavior
+## Why Rust?
 
-On hard problems, Max is often cheaper end to end. One correct pass costs less than three Smart retries, each re-reading the same context.
+One of my primary interests in Rust is its compiler and the guarantees provided by its type system, ownership model, and borrowing rules.
 
-Where the token savings actually come from
+Unlike languages where certain mistakes may not be discovered until runtime, Rust can identify many categories of problems during compilation.
 
-Model choice matters less than context hygiene:
+I believe this creates an interesting advantage when using AI to write software.
 
-Max writes the plan to a file (PLAN.md) with steps and acceptance criteria. Smart workers read the file instead of re-deriving context. Each subagent starts cold, so a handoff file is the cheapest form of memory.
-Pass pointers, not content. Give file paths and line ranges rather than pasting whole files or logs.
-Subagents return conclusions, not dumps. “The failing test is X because Y” instead of 400 lines of output.
-Keep a stable prompt prefix (system prompt, repo conventions, tool definitions) so prompt caching hits. Put the variable task at the end.
-Skip orchestration for small tasks. A one-file fix should just go to Smart. Planner/worker/reviewer overhead only pays off on multi-step work.
-How to start a prompt
-GOAL: Add HPA to the payments service, scaling on CPU and queue depth.
+Rather than trusting an AI model to consistently generate correct code, I can use Rust's compiler and development tools as part of an automated verification process.
 
-CONTEXT: k8s/payments/, charts/payments/values.yaml. KEDA is installed.
+This doesn't guarantee that the application is correct, but it introduces an additional layer of engineering discipline.
 
-CONSTRAINTS: No changes to prod values. Keep min replicas >= 2.
-             Don't touch the ingress.
+## Where AI Skills Fit In
 
-DONE WHEN: helm template renders, kubeconform passes,
-           the staging values diff contains only the HPA/ScaledObject.
+My interest extends beyond Rust itself.
 
-OUTPUT: The diff plus a 3-line summary of the risks.
+I want to explore how reusable AI Skills, coding standards, structured instructions, and automated quality checks can improve the consistency of AI-generated software.
 
-The “done when” line is the most important part. It gives the agent an objective stopping condition, which prevents both premature “done” and runaway iteration, the two biggest sources of wasted tokens.
+My working hypothesis is that combining Rust with well-designed Skills and automated verification can produce software that is more reliable and maintainable, while reducing certain types of engineering mistakes.
 
-The flow in short: Max plans and defines “done,” Smart builds against it, tooling validates continuously, Lite handles the high-volume text work, and Max reviews only the risky diffs.
+I also want to understand the tradeoffs, including development time, AI token usage, complexity, and performance.
+
+## Why Not Just Python?
+
+Python offers significant benefits, particularly its simplicity, rapid development capabilities, and extensive ecosystem.
+
+However, I want to investigate whether Rust provides additional advantages when the majority of implementation work is performed by AI.
+
+If AI can handle much of the initial coding complexity, does Rust's steeper learning curve become less significant? And do its compile-time checks make the overall AI development process more dependable?
+
+These are questions I intend to explore rather than conclusions I've already reached.
+
+## What I Want to Document
+
+Throughout this journey, I plan to record:
+
+- What I learn about Rust and its ecosystem.
+- My experience using AI to develop real applications.
+- How Skills influence AI-generated code.
+- Mistakes caught by Rust's compiler.
+- Situations where Rust makes development harder.
+- Comparisons with Python and other languages.
+- Experiments, performance observations, and lessons learned.
+- How my opinions change as I gain experience.
+
+## Initial Perspective
+
+I am not attempting to establish that Rust is universally better than other programming languages.
+
+Instead, I want to understand whether Rust provides a stronger foundation for the type of AI-assisted engineering I want to pursue.
+
+**My starting belief is that AI can accelerate implementation, while Rust's compiler and a well-designed engineering workflow can help enforce quality.**
+
+The purpose of this documentation is to test that belief through experience and evidence.
