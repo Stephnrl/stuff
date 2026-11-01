@@ -1,19 +1,5 @@
-Step 2: what -p does without -y
+The retest (a fresh-session control)
 
-Use whichever variant worked above, in a scratch folder:
-D=$(mktemp -d); cd $D
-HOME=$T BROWSER=/bin/false timeout 180 COMPANYNAME -p "create a file named hello.txt containing the word hi" --output-format json </dev/null; echo "exit=$?"; ls -la
-Then run the same command with -y added.
-- Report: was hello.txt created? Did the output say something was denied or needs permission? Did it hang (exit 124)?
-- This runs the real agent unconfined, but only in an empty folder and with the temporary home. The prompt is harmless.
-
-Step 3: exit codes and environment variable names
-
-You already have exit codes for a success (Step 1 or 2). Add a fake expired login:
-jq '.sessionToken="not-a-real-token-0000"' $T/.COMPANYNAME/COMPANYNAME-auth.json > $T/c.json && mv $T/c.json $T/.COMPANYNAME/COMPANYNAME-auth.json
-HOME=$T BROWSER=/bin/false timeout 60 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?"
-That value is made up, so it's safe. Report: the exit code and the message.
-
-For the variable names, check its help or docs: COMPANYNAME --help | grep -i -E "env|proxy|cert|config". I'm after names only, like a config-directory variable, a proxy variable and an extra-CA variable.
-
-Clean up (the temporary home holds a token copy):
+1. Use the CLI normally, with your real home. Run COMPANYNAME -p "say hi" once, or log in again if it asks. This refreshes the real session. It's your ordinary use, so there's no new risk.
+2. Immediately afterwards, repeat Step 0 to make a fresh temporary copy without refreshToken.
+3. Run Variant A right away: HOME=$T BROWSER=/bin/false timeout 120 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?".
