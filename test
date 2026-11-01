@@ -1,15 +1,8 @@
-ENT=octo-enterprise
-HOST=github.com   # or your GHES / ghe.com hostname
-
-gh api graphql --hostname "$HOST" --paginate \
-  -f slug="$ENT" -f query='
-query($slug: String!, $endCursor: String) {
-  enterprise(slug: $slug) {
-    organizations(first: 100, after: $endCursor) {
-      pageInfo { hasNextPage endCursor }
-      nodes { login name createdAt url }
-    }
-  }
-}' \
-  --jq '.data.enterprise.organizations.nodes[] | [.login, .name, .createdAt, .url] | @csv' \
-  > "${ENT}-orgs.csv"
+Variant A has refreshToken removed, and Step 0 already made it:
+HOME=$T BROWSER=/bin/false timeout 120 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?"
+Then make Variant B, also without activeCk, and run the same command:
+jq 'del(.activeCk)' $T/.COMPANYNAME/COMPANYNAME-auth.json > $T/b.json && mv $T/b.json $T/.COMPANYNAME/COMPANYNAME-auth.json
+HOME=$T BROWSER=/bin/false timeout 120 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?"
+- BROWSER=/bin/false stops it opening a browser. timeout 120 stops a hang. </dev/null means no terminal input.
+- Report for each variant: did it answer, fail with a message, try to open a browser, or hang (exit 124)? Paste the scrubbed message and the exit code.
+- If Variant A already fails, put refreshToken back only in a throwaway copy and tell me. That would change the design, and we'd decide it together before anything else.
