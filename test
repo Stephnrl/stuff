@@ -1,8 +1,19 @@
-Variant A has refreshToken removed, and Step 0 already made it:
-HOME=$T BROWSER=/bin/false timeout 120 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?"
-Then make Variant B, also without activeCk, and run the same command:
-jq 'del(.activeCk)' $T/.COMPANYNAME/COMPANYNAME-auth.json > $T/b.json && mv $T/b.json $T/.COMPANYNAME/COMPANYNAME-auth.json
-HOME=$T BROWSER=/bin/false timeout 120 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?"
-- BROWSER=/bin/false stops it opening a browser. timeout 120 stops a hang. </dev/null means no terminal input.
-- Report for each variant: did it answer, fail with a message, try to open a browser, or hang (exit 124)? Paste the scrubbed message and the exit code.
-- If Variant A already fails, put refreshToken back only in a throwaway copy and tell me. That would change the design, and we'd decide it together before anything else.
+Step 2: what -p does without -y
+
+Use whichever variant worked above, in a scratch folder:
+D=$(mktemp -d); cd $D
+HOME=$T BROWSER=/bin/false timeout 180 COMPANYNAME -p "create a file named hello.txt containing the word hi" --output-format json </dev/null; echo "exit=$?"; ls -la
+Then run the same command with -y added.
+- Report: was hello.txt created? Did the output say something was denied or needs permission? Did it hang (exit 124)?
+- This runs the real agent unconfined, but only in an empty folder and with the temporary home. The prompt is harmless.
+
+Step 3: exit codes and environment variable names
+
+You already have exit codes for a success (Step 1 or 2). Add a fake expired login:
+jq '.sessionToken="not-a-real-token-0000"' $T/.COMPANYNAME/COMPANYNAME-auth.json > $T/c.json && mv $T/c.json $T/.COMPANYNAME/COMPANYNAME-auth.json
+HOME=$T BROWSER=/bin/false timeout 60 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?"
+That value is made up, so it's safe. Report: the exit code and the message.
+
+For the variable names, check its help or docs: COMPANYNAME --help | grep -i -E "env|proxy|cert|config". I'm after names only, like a config-directory variable, a proxy variable and an extra-CA variable.
+
+Clean up (the temporary home holds a token copy):
