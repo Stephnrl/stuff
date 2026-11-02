@@ -1,5 +1,1 @@
-The retest (a fresh-session control)
-
-1. Use the CLI normally, with your real home. Run COMPANYNAME -p "say hi" once, or log in again if it asks. This refreshes the real session. It's your ordinary use, so there's no new risk.
-2. Immediately afterwards, repeat Step 0 to make a fresh temporary copy without refreshToken.
-3. Run Variant A right away: HOME=$T BROWSER=/bin/false timeout 120 COMPANYNAME -p "say hi" --output-format json </dev/null; echo "exit=$?".
+▎ /mattpocock-skills:implement-spec Read .scratch/workbench-gui/HANDOFF-remaining-work.md first, then work from .scratch/workbench-gui/end-state-spec.md. Only the remaining tickets, in this order: 30, 29, 23, 24, 22, 25, 31, 32, 35. Treat any ticket with Status implemented-awaiting-user as complete for dependency purposes (the code is merged; only the human's hands-on boxes are open). Branch from main (the old integration branch is merged). At most 2 implementers at a time. Do not tick boxes that need my eyes or judgement, do not tag a release, and do not merge the final PR without asking me. Ticket 29's full version needs orchestrator draft 50, which is in the other repository: build 29 first with the summary and an "evidence unavailable" note.
